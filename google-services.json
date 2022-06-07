@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "771056272844",
+    "project_id": "job-timer-3b58b",
+    "storage_bucket": "job-timer-3b58b.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:771056272844:android:117ecee68b276e03af0969",
+        "android_client_info": {
+          "package_name": "com.julie.jobtimer"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "771056272844-et9a61caqkjrne2njc3g6fi1ubdqqccg.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.julie.jobtimer",
+            "certificate_hash": "340624b48d700a074b58dda903097a7ba061803c"
+          }
+        },
+        {
+          "client_id": "771056272844-qdkmf1vct8kghh14bv37dbh0mkclugcs.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDzgJfVI5fV6GI9XrmY__Y6FtrbB1xq2FY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "771056272844-qdkmf1vct8kghh14bv37dbh0mkclugcs.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
