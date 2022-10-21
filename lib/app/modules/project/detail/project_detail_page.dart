@@ -1,8 +1,9 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
-import 'package:asuka/asuka.dart';
+import 'package:asuka/asuka.dart' as asuka;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:job_timer/app/core/ui/job_timer_icons.dart';
+import 'package:job_timer/app/entities/project_status.dart';
 import 'package:job_timer/app/modules/project/detail/controller/project_detail_controller.dart';
 import 'package:job_timer/app/modules/project/detail/widgets/project_detail_appbar.dart';
 import 'package:job_timer/app/modules/project/detail/widgets/project_pie_chart.dart';
@@ -23,7 +24,7 @@ class ProjectDetailPage extends StatelessWidget {
         bloc: controller,
         listener: (context, state) {
           if (state.status == ProjectDetailStatus.failure) {
-            AsukaSnackbar.alert('Erro interno');
+            asuka.AsukaSnackbar.alert('Erro interno');
           }
         },
         builder: (context, state) {
@@ -48,46 +49,77 @@ class ProjectDetailPage extends StatelessWidget {
                 child: Text('Erro ao carregar projeto'),
               );
           }
-
-          return _buildProjectDetail(context, projectModel!);
         },
       ),
     );
   }
 
   Widget _buildProjectDetail(BuildContext context, ProjectModel projectModel) {
+    final totalTask = projectModel.tasks.fold<int>(0, (totalValue, task) {
+      return totalValue += task.duration;
+    });
+
     return CustomScrollView(slivers: [
       ProjectDetailAppbar(
         projectModel: projectModel,
       ),
-      SliverList(
-        delegate: SliverChildListDelegate(
-          [
-            const Padding(
-              padding: EdgeInsets.only(top: 50, bottom: 50),
-              child: ProjectPieChart(),
-            ),
-            const ProjectTaskTile(),
-            const ProjectTaskTile(),
-            const ProjectTaskTile(),
-            const ProjectTaskTile(),
-            const ProjectTaskTile(),
-          ],
+      SliverToBoxAdapter(
+        child: Padding(
+          padding: const EdgeInsets.only(top: 50, bottom: 50),
+          child: ProjectPieChart(
+            projectEstimate: projectModel.estimate,
+            totalTask: totalTask,
+          ),
         ),
       ),
+      SliverList(
+          delegate: SliverChildBuilderDelegate(
+        (context, index) => ProjectTaskTile(task: projectModel.tasks[index]),
+        childCount: projectModel.tasks.length,
+      )),
       SliverFillRemaining(
         hasScrollBody: false,
         child: Align(
           alignment: Alignment.bottomRight,
           child: Padding(
             padding: const EdgeInsets.all(15),
-            child: ElevatedButton.icon(
-                onPressed: () {},
-                icon: const Icon(JobTimerIcons.ok_circled2),
-                label: const Text('Finalizar projeto')),
+            child: Visibility(
+              visible: projectModel.status != ProjectStatus.finalizado,
+              child: ElevatedButton.icon(
+                  onPressed: () {
+                    _confirmFinishProject(context);
+                  },
+                  icon: const Icon(JobTimerIcons.ok_circled2),
+                  label: const Text('Finalizar projeto')),
+            ),
           ),
         ),
       ),
     ]);
+  }
+
+  void _confirmFinishProject(BuildContext context) {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text('Confirma a finalização do projeto?'),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: Text('Cancelar'),
+              ),
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                  controller.finishProject();
+                },
+                child: Text('Confirmar'),
+              ),
+            ],
+          );
+        });
   }
 }
